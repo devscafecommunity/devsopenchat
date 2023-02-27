@@ -26,3 +26,31 @@ a {
     color-scheme: dark;
   }
 }
+
+.consoleBack {
+  background: black;
+  color: white;
+  font-family: monospace;
+}
+
+.consoleImput {
+  background: black;
+  color: white;
+  font-family: monospace;
+
+  /* Remove borders */
+  border: none;
+
+  /* Remove outline */
+  outline: none;
+}
+
+.consoleButton {
+  opacity: 0;
+  border: none;
+  outline: none;
+  cursor: default;
+  padding: 0;
+  margin: 0;
+  width: 0;
+}

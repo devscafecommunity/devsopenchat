@@ -7,10 +7,12 @@ function Console() {
   const [command, setCommand] = useState('');
   const [output, setOutput] = useState([]);
 
-  function handleCommand() {
-    const result = processCommand(command);
-    setOutput(output.concat(result));
-    setCommand('');
+  function handleCommand(event) {
+    if (event.key === 13) {
+      const result = processCommand(command);
+      setOutput(output.concat(result));
+      setCommand('');
+    }
   }
 
   function renderOutput() {
@@ -20,10 +22,10 @@ function Console() {
   }
 
   return (
-    <div style={{ backgroundColor: 'black', color: 'white', fontFamily: 'monospace' }}>
+    <div className={'consoleBack'}>
       {renderOutput()}
-      <input value={command} onChange={(e) => setCommand(e.target.value)} />
-      <button onClick={handleCommand}>Submit</button>
+      <input value={command} onChange={(e) => setCommand(e.target.value)} className={'consoleImput'}/>
+      <button onKeyDown={handleCommand}>Submit</button>
     </div>
   );
 }
