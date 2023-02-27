@@ -1,14 +1,25 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
-import Console from 'components/Console'
+'use client';
 
-const inter = Inter({ subsets: ['latin'] })
+import { useEffect } from 'react';
+import { io } from "socket.io-client";
 
-export default function Home() {
-  return (
-    <div>
-      <Console />
-    </div>
-  )
+
+const Home = () => {
+  const { io } = require('socket.io-client');
+
+  const socket = io('http://localhost:3002');
+  
+  socket.on('connect', () => {
+      console.log('connected');
+      }
+  );
+
+  socket.on('hello', () =>
+      console.log('hello')
+  );
+
+
+  return null
 }
+
+export default Home;
