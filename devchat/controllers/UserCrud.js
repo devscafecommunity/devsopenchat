@@ -240,4 +240,6 @@ class UserCrud{
     }
 }
 
-module.exports = new UserCrud(UserModel, User);
+module.exports = {
+    UserCrud: UserCrud
+}

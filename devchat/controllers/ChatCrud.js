@@ -33,10 +33,6 @@ const ChatModel = sequelize.define('Chat', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    created_at: {
-        type: Sequelize.DATE,
-        allowNull: false
-    }
 });
 
 // Controllers
@@ -97,7 +93,11 @@ class ChatCrud{
 }
 
 // Sync
-sequelize.sync();
+// sequelize.sync(
+//     {force: true}
+// );
 
 // Export
-module.exports = new ChatCrud(ChatModel);
+module.exports = {
+    ChatCrud: new ChatCrud(ChatModel),
+}

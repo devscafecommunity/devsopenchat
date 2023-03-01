@@ -3,12 +3,12 @@ var socket = io();
 var form = document.getElementById('form');
 var input = document.getElementById('input');
 
-// Try to get token cokie
-var token = document.cookie.split(';').find(row => row.trim().startsWith('token=')).split('=')[1];
-// If not find token redirect to auth/index.html
-if (token == undefined) {
-    window.location.href = "http://localhost:3000/auth/index.html";
-}
+// // Try to get token cokie
+// var token = document.cookie.split(';').find(row => row.trim().startsWith('token=')).split('=')[1];
+// // If not find token redirect to auth/index.html
+// if (token == undefined) {
+//     window.location.href = "http://localhost:3000/auth/index.html";
+// }
 
 // Event listener
 socket.on('disconnect', () => {
@@ -28,6 +28,30 @@ socket.on('chat-message', function(msg) {
 socket.on('get-active-users', function(msg) {
     console.log(msg);
 });
+
+// Ask for chat data on connection
+socket.on('connect', () => {
+    socket.emit('load-messages');
+    socket.emit('get-active-users')
+});
+
+// Recive chat data from server
+socket.on('load-messages', function(msg) {
+    // Verify if section id is the same as the client section id
+    if (msg.id == socket.id) {
+        // Loop through all messages
+        for (let i = 0; i < msg.message.length; i++) {
+            // Create new list item
+            var item = document.createElement('li');
+            // Set list item text to message
+            item.textContent = msg.message[i].message;
+            // Append list item to messages
+            messages.appendChild(item);
+        }
+        // Scroll to bottom of messages
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+});                                
 
 
 form.addEventListener('submit', function(e) {
