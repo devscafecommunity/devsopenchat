@@ -19,6 +19,10 @@ app.get("/chat/:req", (req, res) => {
   res.sendFile(__dirname + "/chat/" + req.params.req);
 });
 
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/home/" + "index.html");
+});
+
 
 
 let active_users = [];
@@ -49,7 +53,7 @@ io.on("connection", (socket) => {
       });
   
       console.log("User disconnected by being idle.");
-    }, 5000); // 1 minute
+    }, (60000 * 60)); // 1 hour
   }
   resetTimeout();
   
@@ -100,22 +104,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("user-auth", (user) => {
-    let userCrud = new UserCrud();
-    userCrud.read(user).then((result) => {
-      if (result.length > 0) {
-        io.emit("user-auth-response", {
-          id: socket.id,
-          message: "User auth",
-          responseStatus: true,
-        });
-      } else {
-        io.emit("user-auth-response", {
-          id: socket.id,
-          message: "User not auth",
-          responseStatus: false
-        });
-      }
-    });
+    
   });
 });
 

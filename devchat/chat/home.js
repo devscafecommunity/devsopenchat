@@ -32,7 +32,15 @@ socket.on('disconnect', () => {
 });
 
 socket.on('chat-message', function(msg) {
-    addMessage(msg);
+        // If lenght greather than 4000 chars send alert
+        if (msg.length > 4000) {
+            alert("Message too long");
+            return;
+        }
+        else{
+            addMessage(msg);
+        }
+    
 });
 
 socket.on('get-active-users', function(msg) {

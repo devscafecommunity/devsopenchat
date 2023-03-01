@@ -5,5 +5,17 @@
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
     "sqlite3": "^5.1.4"
-  }
+  },
+  "name": "devchat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
