@@ -12,7 +12,8 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const { ChatCrud, UserCrud } = require('./controllers/ChatCrud');
+const { ChatCrud } = require('./controllers/ChatCrud');
+const { UserCrud } = require('./controllers/UserCrud');
 
 app.get("/chat/:req", (req, res) => {
   res.sendFile(__dirname + "/chat/" + req.params.req);
@@ -20,6 +21,15 @@ app.get("/chat/:req", (req, res) => {
 
 
 
+let active_users = [];
+
+function add_user(user) {
+  active_users.push(user);
+}
+
+function remove_user(user) {
+  active_users = active_users.filter((u) => u.id != user.id);
+}
 
 
 // Socket + Prevent inactive and prevent overload connection
@@ -50,6 +60,7 @@ io.on("connection", (socket) => {
     })
   )
 
+
   socket.on("load-messages", () =>{
     let chat = ChatCrud;
     chat.readAll().then((result) => {
@@ -59,6 +70,7 @@ io.on("connection", (socket) => {
       });
     });
   })
+
 
   socket.on("disconnect", () => {
     io.emit("chat-movment", {
@@ -70,6 +82,7 @@ io.on("connection", (socket) => {
     clearTimeout(timeout);
   });
 
+
   socket.on("chat-message", (msg) => {
     io.emit("chat-message", msg);
 
@@ -80,11 +93,32 @@ io.on("connection", (socket) => {
     resetTimeout();
   });
 
+  
   socket.on("get-active-users", (users) => {
     let activeUsers = socket.listenerCount("connection");
     io.emit("get-active-users", activeUsers);
   });
+
+  socket.on("user-auth", (user) => {
+    let userCrud = new UserCrud();
+    userCrud.read(user).then((result) => {
+      if (result.length > 0) {
+        io.emit("user-auth-response", {
+          id: socket.id,
+          message: "User auth",
+          responseStatus: true,
+        });
+      } else {
+        io.emit("user-auth-response", {
+          id: socket.id,
+          message: "User not auth",
+          responseStatus: false
+        });
+      }
+    });
+  });
 });
+
 
 server.listen(3001, () => {
   console.log("Serving on port 3001");

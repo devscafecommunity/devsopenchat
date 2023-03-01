@@ -11,18 +11,28 @@ var input = document.getElementById('input');
 // }
 
 // Event listener
-socket.on('disconnect', () => {
+
+// Function for add message
+function addMessage(msg) {
+    var messages = document.getElementById('messages');
     var item = document.createElement('li');
-    item.textContent = "Disconnected by idling reload page for reconect."
+    // If lenght greather than 100 break the line
+    if (msg.length > 100) {
+        msg = msg.match(/.{1,100}/g).join("<br>");
+    }
+    item.innerHTML = msg;
     messages.appendChild(item);
     window.scrollTo(0, document.body.scrollHeight);
+} 
+
+
+socket.on('disconnect', () => {
+    console.log('You were disconnected');
+    addMessage("Disconnected by idling reload page for reconect.");
 });
 
 socket.on('chat-message', function(msg) {
-    var item = document.createElement('li');
-    item.textContent = msg;
-    messages.appendChild(item);
-    window.scrollTo(0, document.body.scrollHeight);
+    addMessage(msg);
 });
 
 socket.on('get-active-users', function(msg) {
@@ -41,12 +51,8 @@ socket.on('load-messages', function(msg) {
     if (msg.id == socket.id) {
         // Loop through all messages
         for (let i = 0; i < msg.message.length; i++) {
-            // Create new list item
-            var item = document.createElement('li');
-            // Set list item text to message
-            item.textContent = msg.message[i].message;
-            // Append list item to messages
-            messages.appendChild(item);
+            // Add message to chat
+            addMessage(msg.message[i].message);
         }
         // Scroll to bottom of messages
         window.scrollTo(0, document.body.scrollHeight);
@@ -57,9 +63,11 @@ socket.on('load-messages', function(msg) {
 form.addEventListener('submit', function(e) {
     e.preventDefault();
     if (input.value) {
-      socket.emit('chat-message', input.value);
-      socket.emit('get-active-users')
 
-      input.value = '';
+        // Send message to server
+        socket.emit('chat-message', input.value);
+        socket.emit('get-active-users')
+
+        input.value = '';
     }
 });
