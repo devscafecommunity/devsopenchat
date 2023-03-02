@@ -20,7 +20,7 @@ app.get("/chat/:req", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/home/" + "index.html");
+  res.sendFile(__dirname + "/chat/" + "home.html");
 });
 
 
