@@ -95,6 +95,6 @@ io.on("connection", (socket) => {
 });
 
 
-server.listen(80, () => {
-  console.log("Serving on port 80");
+server.listen(3000, () => {
+  console.log("Serving on port 3000");
 });
