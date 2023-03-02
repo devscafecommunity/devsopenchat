@@ -25,19 +25,21 @@ app.get("/", (req, res) => {
 
 
 
-let active_users = [];
+// let active_users = [];
 
-function add_user(user) {
-  active_users.push(user);
-}
+// function add_user(user) {
+//   active_users.push(user);
+// }
 
-function remove_user(user) {
-  active_users = active_users.filter((u) => u.id != user.id);
-}
+// function remove_user(user) {
+//   active_users = active_users.filter((u) => u.id != user.id);
+// }
 
 
 // Socket + Prevent inactive and prevent overload connection
 io.on("connection", (socket) => {
+  console.log("User connected");
+
   // Set timeout
   let timeout;
 
@@ -57,12 +59,6 @@ io.on("connection", (socket) => {
   }
   resetTimeout();
   
-  socket.on("connect", () =>
-    io.emit("chat-movment", {
-      id: socket.id,
-      message: "User user connected",
-    })
-  )
 
 
   socket.on("load-messages", () =>{
@@ -83,7 +79,7 @@ io.on("connection", (socket) => {
     });
 
     console.log("User disconnected");
-    clearTimeout(timeout);
+    // clearTimeout(timeout);
   });
 
 
@@ -95,16 +91,6 @@ io.on("connection", (socket) => {
 
     console.log("Message sent")
     resetTimeout();
-  });
-
-  
-  socket.on("get-active-users", (users) => {
-    let activeUsers = socket.listenerCount("connection");
-    io.emit("get-active-users", activeUsers);
-  });
-
-  socket.on("user-auth", (user) => {
-    
   });
 });
 

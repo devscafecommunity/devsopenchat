@@ -40,18 +40,15 @@ socket.on('chat-message', function(msg) {
         else{
             addMessage(msg);
         }
-    
 });
 
-socket.on('get-active-users', function(msg) {
-    console.log(msg);
-});
-
-// Ask for chat data on connection
 socket.on('connect', () => {
-    socket.emit('load-messages');
-    socket.emit('get-active-users')
+    console.log('You are connected');
+    socket.emit('load-messages', {
+        id: socket.id
+    });
 });
+
 
 // Recive chat data from server
 socket.on('load-messages', function(msg) {
