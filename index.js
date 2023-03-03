@@ -386,9 +386,7 @@ io.on("connection", (socket) => {
     // Verify if is a command
     if (msg.startsWith("/")){
       // Prevent message spam
-      if(preventSpam()){
-        return;
-      }
+      preventSpam();
 
       // Turn async
       (async () => {
