@@ -274,48 +274,6 @@ async function commandHandler(imput){
 io.on("connection", (socket) => {
   console.log("User connected");
 
-  // Message span 
-  let last_message_date = null;
-  let message_count = 0;
- 
-  // Prevent message spam
-  function preventSpam() {
-    // For prevent span disconnect the user
-    if (message_count >= 5) {
-      socket.disconnect(true); // close the connection
-      io.emit("chat-movment", {
-        id: socket.id,
-        message: "User user disconnected by spamming.",
-      });
-      console.log("User disconnected by spamming.");
-    }
-    // For prevent span disconnect the user
-    if (last_message_date != null) {
-      if (last_message_date + 1000 > new Date().getTime()) {
-        socket.disconnect(true); // close the connection
-        io.emit("chat-movment", {
-          id: socket.id,
-          message: "User user disconnected by spamming.",
-        });
-        console.log("User disconnected by spamming.");
-        return true;
-      }
-    }
-    // Reset the message counter
-    if (last_message_date == null) {
-      last_message_date = new Date().getTime();
-      message_count = 0;
-    }
-    // Reset the message counter
-    if (last_message_date + 1000 < new Date().getTime()) {
-      last_message_date = new Date().getTime();
-      message_count = 0;
-    }
-    // Increment the message counter
-    message_count++;
-    return false;
-  }
-
   // Set timeout
   let timeout;
 
@@ -360,17 +318,12 @@ io.on("connection", (socket) => {
 
 
   socket.on("chat-message", (msg) => {
-    // io.emit("chat-message", msg);
-
-    // Prevent message spam
-    preventSpam();
     // Prevent overload connection
     if (msg.length > 4000) {
       socket.disconnect(true); // close the connection
       console.log("User disconnected by overload connection.");
       return;
     }
-    
     
     // Prevent html tags
     if (isHTML(msg)) {
@@ -385,9 +338,6 @@ io.on("connection", (socket) => {
 
     // Verify if is a command
     if (msg.startsWith("/")){
-      // Prevent message spam
-      preventSpam();
-
       // Turn async
       (async () => {
         let result = await commandHandler(msg).then((res) => {
