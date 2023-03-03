@@ -196,10 +196,22 @@ let commands = {
 // // Content filters
 
 // Is a html tag
+// format <a-zA-Z>*</a-zA-Z>
+// also catch if even if not have closing tag <a-zA-Z>*<a-zA-Z>
+// also catch if even if not have body <a-zA-Z><a-zA-Z>
+// also catch if even if is single <a-zA-Z/> 
+// in all cach spaces inside the tag like < a/> < a />
+// in all cach special chars
+
 function isHTML(str) {
-  // regex
-  var a = /<[a-z][\s\S]*>/i;
-  if (a.test(str)) {
+  // Regex
+  let singleNoClosing = /<\s*\w+\s*\/\s*>/g;
+  let single = /<\s*\w+\s*\/\s*>/g;
+  let noClosing = /<\s*\w+\s*>/g;
+  let normal = /<\s*\w+\s*>\s*<\s*\/\s*\w+\s*>/g;
+  let normalNoClosing = /<\s*\w+\s*>\s*<\s*\/\s*\w+\s*>/g;
+
+  if (singleNoClosing.test(str) || single.test(str) || noClosing.test(str) || normal.test(str) || normalNoClosing.test(str)) {
     return true;
   }
 }
@@ -262,6 +274,46 @@ async function commandHandler(imput){
 io.on("connection", (socket) => {
   console.log("User connected");
 
+  // Message span 
+  let last_message_date = null;
+  let message_count = 0;
+ 
+  // Prevent message spam
+  function preventSpam() {
+    // For prevent span disconnect the user
+    if (message_count >= 10) {
+      socket.disconnect(true); // close the connection
+      io.emit("chat-movment", {
+        id: socket.id,
+        message: "User user disconnected by spamming.",
+      });
+      console.log("User disconnected by spamming.");
+    }
+    // For prevent span disconnect the user
+    if (last_message_date != null) {
+      if (last_message_date + 1000 > new Date().getTime()) {
+        socket.disconnect(true); // close the connection
+        io.emit("chat-movment", {
+          id: socket.id,
+          message: "User user disconnected by spamming.",
+        });
+        console.log("User disconnected by spamming.");
+      }
+    }
+    // Reset the message counter
+    if (last_message_date == null) {
+      last_message_date = new Date().getTime();
+      message_count = 0;
+    }
+    // Reset the message counter
+    if (last_message_date + 1000 < new Date().getTime()) {
+      last_message_date = new Date().getTime();
+      message_count = 0;
+    }
+    // Increment the message counter
+    message_count++;
+  }
+
   // Set timeout
   let timeout;
 
@@ -308,9 +360,13 @@ io.on("connection", (socket) => {
   socket.on("chat-message", (msg) => {
     // io.emit("chat-message", msg);
 
+    // Prevent message spam
+    preventSpam();
     // Prevent overload connection
     if (msg.length > 4000) {
       socket.disconnect(true); // close the connection
+      console.log("User disconnected by overload connection.");
+      return;
     }
     
     
@@ -322,10 +378,14 @@ io.on("connection", (socket) => {
         message: "HTML tag detected",
       });
       socket.disconnect(true); // close the connection
+      return;
     }
 
     // Verify if is a command
     if (msg.startsWith("/")){
+      // Prevent message spam
+      preventMessageSpam();
+
       // Turn async
       (async () => {
         let result = await commandHandler(msg).then((res) => {
