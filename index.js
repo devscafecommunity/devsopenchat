@@ -91,7 +91,7 @@ let commands = {
         request(url, { json: true }, (err, res, body) => {
           if (err) { reject(err); }
           let rer = `
-            <img src="${body.data[0]?.images?.original?.url ?? notresponse}">
+            <img src="${body.data[0].url ?? notresponse}">
           `;
           resolve(rer);
         }
