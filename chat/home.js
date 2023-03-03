@@ -72,6 +72,11 @@ socket.on('load-messages', function(msg) {
 
 form.addEventListener('submit', function(e) {
     e.preventDefault();
+    // If lenght greather than 4000 chars send alert
+    if (input.value.length > 4000) {
+        alert("Message too long");
+        return;
+    }
     if (input.value) {
 
         // Send message to server
