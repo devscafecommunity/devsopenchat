@@ -6,14 +6,20 @@
     "sequelize": "^6.29.0",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
-    "sqlite3": "^5.1.4"
+    "sqlite3": "^5.1.4",
+    "@tensorflow-models/toxicity": "^1.2.2",
+    "@tensorflow/tfjs": "1.0",
+    "natural": "^5.2.2"
   },
   "name": "devchat",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npm install && node index.js"
+    "dev": "npm install && node index.js",
+    "train": "node src/train.js",
+    "run": "node src/run.js",
+    "build": "node src/builddata.js"
   },
   "keywords": [],
   "author": "",

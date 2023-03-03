@@ -18,6 +18,11 @@ const Chat = require('./models/chat');
 const io = new Server(server);
 const request = require('request');
 
+require('@tensorflow/tfjs');
+const toxicity = require('@tensorflow-models/toxicity');
+const fs = require('fs');
+const path = require('path');
+
 // --------------------------------- Keys -------------------------------------------
 let GIPHY_KEY = process.env.GIPHY_KEY;
 
@@ -79,45 +84,45 @@ let commands = {
       return result;
     }
   },
-  "giphy": {
-    "description": "Get a gif from giphy",
-    "usage": "/giphy <search>",
-    "function": async (msg, args) => {
-      // http://api.giphy.com/v1/gifs/search?q=ryan+gosling&api_key=YOUR_API_KEY&limit=1
-      /*
-      Return:
-      {
-        "data": [
-          {
-            "type": "gif",
-            "id": "MeIucAjPKoA120R7sN",
-            "url": "https://giphy.com/gifs/MeIucAjPKoA120R7sN", <- What we want
-            "slug": "MeIucAjPKoA120R7sN",
-            "bitly_gif_url": "https://gph.is/g/4AykB7O",
-            "bitly_url": "https://gph.is/g/4AykB7O",
-            "embed_url": "https://giphy.com/embed/MeIucAjPKoA120R7sN",
-            "username": "bluesbear",
-            "source": "",
-            "title": "Happy Cheering GIF by bluesbear",
-            "rating": "g",
-            ...
-      */
-      let result = await new Promise((resolve, reject) => {
+  // "giphy": {
+  //   "description": "Get a gif from giphy",
+  //   "usage": "/giphy <search>",
+  //   "function": async (msg, args) => {
+  //     // http://api.giphy.com/v1/gifs/search?q=ryan+gosling&api_key=YOUR_API_KEY&limit=1
+  //     /*
+  //     Return:
+  //     {
+  //       "data": [
+  //         {
+  //           "type": "gif",
+  //           "id": "MeIucAjPKoA120R7sN",
+  //           "url": "https://giphy.com/gifs/MeIucAjPKoA120R7sN", <- What we want
+  //           "slug": "MeIucAjPKoA120R7sN",
+  //           "bitly_gif_url": "https://gph.is/g/4AykB7O",
+  //           "bitly_url": "https://gph.is/g/4AykB7O",
+  //           "embed_url": "https://giphy.com/embed/MeIucAjPKoA120R7sN",
+  //           "username": "bluesbear",
+  //           "source": "",
+  //           "title": "Happy Cheering GIF by bluesbear",
+  //           "rating": "g",
+  //           ...
+  //     */
+  //     let result = await new Promise((resolve, reject) => {
 
-        let url = `http://api.giphy.com/v1/gifs/search?q=${args.join("+")}&api_key=${GIPHY_KEY}&limit=1`;
-        let notresponse = "https://media.tenor.com/FM2b-I7t8S4AAAAC/discord-about-me.gif"
-        request(url, { json: true }, (err, res, body) => {
-          if (err) { reject(err); }
-          let rer = `
-            <img src="${body.data[0]?.url ?? notresponse}">
-          `;
-          resolve(rer);
-        }
-        );
-      });
-      return result;
-    }
-  },
+  //       let url = `http://api.giphy.com/v1/gifs/search?q=${args.join("+")}&api_key=${GIPHY_KEY}&limit=1`;
+  //       let notresponse = "https://media.tenor.com/FM2b-I7t8S4AAAAC/discord-about-me.gif"
+  //       request(url, { json: true }, (err, res, body) => {
+  //         if (err) { reject(err); }
+  //         let rer = `
+  //           <img src="${body.data[0]?.url ?? notresponse}">
+  //         `;
+  //         resolve(rer);
+  //       }
+  //       );
+  //     });
+  //     return result;
+  //   }
+  // },
   "duckgo": {
     "description": "Make a seach in duck go",
     "usage": "/duckgo <search>",
@@ -139,6 +144,28 @@ let commands = {
     }
   }
 }
+
+// // Content filter
+// function filter(msg) {
+//   // // The minimum prediction confidence.
+//   // const threshold = 0.9;
+
+//   // // Which toxicity labels to return.
+//   // const labelsToInclude = ['identity_attack', 'insult', 'threat'];
+
+//   // toxicity.load(threshold).then(model => {
+//   //     const sentences = ['you suck'];
+//   //     model.classify(sentences).then(predictions => {
+//   //         predictions.forEach(prediction => {
+//   //             console.log(prediction.label);
+//   //             console.log(prediction.results[0].match);
+//   //             console.log(prediction.results[0].probabilities);
+//   //         });
+//   //     });
+//   // });
+// }
+
+
 
 async function commandHandler(imput){
   let args = imput.split(" ");
