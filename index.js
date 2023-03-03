@@ -24,7 +24,8 @@ const badwords = require(
   path.join(__dirname, 'badwords.json')
 )
 // --------------------------------- Keys -------------------------------------------
-let GIPHY_KEY = process.env.GIPHY_KEY;
+const GIPHY_KEY = process.env.GIPHY_KEY;
+const ADMIN_KEY = process.env.ADMIN_KEY;
 
 
 const { ChatCrud } = require(
@@ -62,15 +63,43 @@ let commands = {
   "help": {
     "description": "List all commands",
     "usage": "/help",
+    "isAdmin": false,
     "function": async (msg, args) => {
-      return Object.keys(commands).map((key) => {
-        return `${key} - ${commands[key].description} - ${commands[key].usage} <br />`;
-      });
+      // Render a table
+      let result = `
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Description</th>
+              <th>Usage</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      for (let key in commands) {
+        // Dont render "isAdmin": true,
+        if (!commands[key].isAdmin) {
+          result += `
+            <tr>
+              <td>${key}</td>
+              <td>${commands[key].description}</td>
+              <td>${commands[key].usage}</td>
+            </tr>
+          `;
+        }
+      }
+      result += `
+          </tbody>
+        </table>
+      `;
+      return result;
     },
   },
   "dogpic": {
     "description": "Get a random dog picture",
     "usage": "/dogpic",
+    "isAdmin": false,
     "function": async (msg, args) => {
       let result = await new Promise((resolve, reject) => {
         request('https://dog.ceo/api/breeds/image/random', { json: true }, (err, res, body) => {
@@ -126,6 +155,7 @@ let commands = {
   "duckgo": {
     "description": "Make a seach in duck go",
     "usage": "/duckgo <search>",
+    "isAdmin": false,
     "function": async (msg, args) => {
       let result = await new Promise((resolve, reject) => {
         let url = `https://api.duckduckgo.com/?q=${args.join("+")}&format=json&pretty=1`;
@@ -145,16 +175,18 @@ let commands = {
   },
   "clear": {
     "description": "Clear the chat",
-    "usage": "/clear",
+    "usage": "/clear <admin key>",
+    "isAdmin": true,
     "function": async (msg, args) => {
       let result = await new Promise((resolve, reject) => {
-
-        let chat = ChatCrud;
-        chat.clearAll();
-
-        // Disconect all users from socket
-        io.sockets.emit("clear");
-        resolve("Chat cleared");
+        if (args[0] == ADMIN_KEY) {
+          let chat = ChatCrud;
+          chat.clearAll();
+          io.sockets.emit("clear");
+          resolve("Chat cleared");
+        } else {
+          resolve("Invalid admin key");
+        }
       });
       return result;
     }
@@ -172,15 +204,42 @@ function isHTML(str) {
   }
 }
 
-// Is a script tag
-function isScript(str) {
+// Renders
+
+// Image
+function renderImage(url) {
+  return `
+    <img src="${url}">
+  `;
+}
+
+// Link
+function renderLink(url) {
+  return `
+    <a href="${url}">${url}</a>
+  `;
+}
+
+
+// Renders verifyers
+
+// Is a image
+function isImage(url) {
   // regex
-  var a = /<script[\s\S]*>/i;
-  if (a.test(str)) {
+  var a = /(.jpg|.jpeg|.png|.gif|.bmp|.svg|.webp)$/i;
+  if (a.test(url)) {
     return true;
   }
 }
 
+// Is a link
+function isLink(url) {
+  // regex
+  var a = /((http|https):\/\/)/i;
+  if (a.test(url)) {
+    return true;
+  }
+}
 
 
 
@@ -253,19 +312,15 @@ io.on("connection", (socket) => {
     if (msg.length > 4000) {
       socket.disconnect(true); // close the connection
     }
-
+    
+    
     // Prevent html tags
     if (isHTML(msg)) {
-      socket.disconnect(true); // close the connection
-    }
-
-    // Prevent script tags
-    if (isScript(msg)) {
-      socket.disconnect(true); // close the connection
-    }
-
-    // Prevent badwords
-    if (isBadWord(msg)) {
+      // Send message
+      io.emit("chat-message", {
+        id: socket.id,
+        message: "HTML tag detected",
+      });
       socket.disconnect(true); // close the connection
     }
 
@@ -283,6 +338,15 @@ io.on("connection", (socket) => {
       )();
     }
     else{
+      // Renders verifyers
+      if (isImage(msg)) {
+        msg = renderImage(msg);
+      }
+      else if (isLink(msg)) {
+        msg = renderLink(msg);
+      }
+
+      // Send message
       io.emit("chat-message", {
         id: socket.id,
         message: msg,
