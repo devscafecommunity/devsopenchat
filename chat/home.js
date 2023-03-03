@@ -38,7 +38,7 @@ socket.on('chat-message', function(msg) {
             return;
         }
         else{
-            addMessage(msg);
+            addMessage(msg.message);
         }
 });
 

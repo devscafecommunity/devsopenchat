@@ -90,6 +90,16 @@ class ChatCrud{
 
         return result;
     }
+
+    // Clear all
+    async clearAll(){
+        let result = await this.Chat.destroy({
+            where: {},
+            truncate: true
+        });
+
+        return result;
+    }
 }
 
 // Sync
