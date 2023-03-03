@@ -59,7 +59,7 @@ let commands = {
     "usage": "/help",
     "function": async (msg, args) => {
       return Object.keys(commands).map((key) => {
-        return `${key} - ${commands[key].description} - ${commands[key].usage}`;
+        return `${key} - ${commands[key].description} - ${commands[key].usage} <br />`;
       });
     },
   },
