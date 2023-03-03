@@ -281,7 +281,7 @@ io.on("connection", (socket) => {
   // Prevent message spam
   function preventSpam() {
     // For prevent span disconnect the user
-    if (message_count >= 10) {
+    if (message_count >= 5) {
       socket.disconnect(true); // close the connection
       io.emit("chat-movment", {
         id: socket.id,
