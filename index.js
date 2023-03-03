@@ -298,6 +298,7 @@ io.on("connection", (socket) => {
           message: "User user disconnected by spamming.",
         });
         console.log("User disconnected by spamming.");
+        return true;
       }
     }
     // Reset the message counter
@@ -312,6 +313,7 @@ io.on("connection", (socket) => {
     }
     // Increment the message counter
     message_count++;
+    return false;
   }
 
   // Set timeout
@@ -384,7 +386,9 @@ io.on("connection", (socket) => {
     // Verify if is a command
     if (msg.startsWith("/")){
       // Prevent message spam
-      preventMessageSpam();
+      if(preventMessageSpam()){
+        return;
+      }
 
       // Turn async
       (async () => {
