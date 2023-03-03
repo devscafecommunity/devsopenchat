@@ -42,9 +42,15 @@ app.get("/chat/:req", (req, res) => {
   res.sendFile(path.join(__dirname, 'chat', req.params.req));
 });
 
+app.get("/auth/:req", (req, res) => {
+  // res.sendFile(__dirname + "/chat/" + req.params.req);
+  res.sendFile(path.join(__dirname, 'auth', req.params.req));
+});
+
+
 app.get("/", (req, res) => {
   // res.sendFile(__dirname + "/chat/" + "home.html");
-  res.sendFile(path.join(__dirname, 'chat', 'home.html'));
+  res.sendFile(path.join(__dirname, 'auth', 'auth.html'));
 });
 
 
@@ -370,6 +376,80 @@ io.on("connection", (socket) => {
     console.log("Message sent")
     resetTimeout();
   });
+
+  // Login
+  /*
+  Login socket client emit:
+
+    socket.emit('register', {
+        username,
+        password,
+        email,
+        id: socket.id
+    });
+
+  */
+  socket.on("login", (msg) => {
+    let user = UserCrud;
+    user.readByUsername(msg.username)
+      .then((result) => {
+        if (result.length == 0) {
+          io.emit("login", {
+            id: socket.id,
+            message: "Username not found",
+            status: false
+          });
+        } else {
+          if (result[0].password == msg.password) {
+            io.emit("login", {
+              id: socket.id,
+              message: "Login success",
+              status: true
+            });
+          } else {
+            io.emit("login", {
+              id: socket.id,
+              message: "Wrong password",
+              status: false
+            });
+          }
+        }
+      });
+    });
+
+  // Register
+  /*
+  Register socket client emit:
+
+    socket.emit('register', {
+        username,
+        password,
+        id: socket.id
+    })
+
+  */
+
+  socket.on("register", (msg) => {
+    let user = UserCrud;
+    user.readByUsername(msg.username)
+      .then((result) => {
+        if (result.length == 0) {
+          user.create(msg.username, );
+          io.emit("register", {
+            id: socket.id,
+            message: "Register success",
+            status: true
+          });
+        } else {
+          io.emit("register", {
+            id: socket.id,
+            message: "Username already exists",
+            status: false
+          });
+        }
+      });
+    });
+
 });
 
 

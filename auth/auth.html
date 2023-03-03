@@ -2,14 +2,71 @@
 <html>
   <head>
     <!-- Style -->
-    <link rel="stylesheet" href="/chat/home.css" />
+    <link rel="stylesheet" href="/auth/auth.css" />
   </head>
   <body>
-    <ul id="messages"></ul>
-    <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+    <!-- Login form -->
+      <div id="loginform" class="form-group">
+        <h1>Login</h1>
+        <form id="login" action="">
+          <input id="username" autocomplete="off" 
+            placeholder="Username" 
+            autofocus="autofocus" 
+            type="text" 
+            name="username" 
+            value="" 
+            required="required" 
+            pattern=".{1,}" 
+            title="1 character minimum" /><br />
+          <input id="password" autocomplete="off" 
+            placeholder="Password" 
+            autofocus="autofocus" 
+            type="password" 
+            name="password" 
+            value="" 
+            required="required" 
+            pattern=".{1,}" 
+            title="1 character minimum" /><br />
+          <div>
+            <button id="submit" type="submit">Register</button>
+          <div>
+        </form>
+      </div>
+
+      <!-- Or -->
+      <div id="registerform" class="form-group">
+        <h1>Or</h1>
+      </div>
+
+      <!-- Register form -->
+      <div id="registerform" class="form-group">
+        <h1>Register</h1>
+        <form id="register" action="">
+          <input id="username" autocomplete="off" 
+            placeholder="Username" 
+            autofocus="autofocus" 
+            type="text" 
+            name="username" 
+            value="" 
+            required="required" 
+            pattern=".{1,}" 
+            title="1 character minimum" /><br />
+          <input id="password" autocomplete="off" 
+            placeholder="Password" 
+            autofocus="autofocus" 
+            type="password" 
+            name="password" 
+            value="" 
+            required="required" 
+            pattern=".{1,}" 
+            title="1 character minimum" /><br />
+          <div>
+            <button id="submit" type="submit">Register</button>
+          <div>
+        </form>
+
+
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/chat/home.js"></script>
+    <script src="/auth/auth.js"></script>
   </body>
 </html>

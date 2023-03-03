@@ -15,26 +15,8 @@ body {
 }
 
 
-/* 
+/* Side Bar */
+#sidebar { background: #000000; color: #00ff1e; position: fixed; top: 0; bottom: 0; left: 0; width: 15rem; padding: 1rem; box-sizing: border-box; }
 
-Content style
-
-[left bar][right bar]
-
-[content container[info][chat]]
-*/
-
-/* Path: chat\home.css */
-
-#leftbar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 20%;
-    background: #000000;
-    color: #00ff1e;
-    overflow: auto;
-    padding: 0.5rem;
-    box-sizing: border-box;
-}
+/* Main content */
+#main { margin-left: 15rem; padding: 1rem; box-sizing: border-box; }
