@@ -31,6 +31,11 @@ socket.on('disconnect', () => {
     addMessage("Disconnected by idling reload page for reconect.");
 });
 
+socket.on('clear', () => {
+    // Reload page
+    location.reload();
+})
+
 socket.on('chat-message', function(msg) {
         // If lenght greather than 4000 chars send alert
         if (msg.length > 4000) {

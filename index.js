@@ -18,11 +18,11 @@ const Chat = require('./models/chat');
 const io = new Server(server);
 const request = require('request');
 
-require('@tensorflow/tfjs');
-const toxicity = require('@tensorflow-models/toxicity');
 const fs = require('fs');
-const path = require('path');
-
+const badwords = require(
+  // './badwords.json' Use path
+  path.join(__dirname, 'badwords.json')
+)
 // --------------------------------- Keys -------------------------------------------
 let GIPHY_KEY = process.env.GIPHY_KEY;
 
@@ -142,28 +142,45 @@ let commands = {
       });
       return result;
     }
+  },
+  "clear": {
+    "description": "Clear the chat",
+    "usage": "/clear",
+    "function": async (msg, args) => {
+      let result = await new Promise((resolve, reject) => {
+
+        let chat = ChatCrud;
+        chat.clearAll();
+
+        // Disconect all users from socket
+        io.sockets.emit("clear");
+        resolve("Chat cleared");
+      });
+      return result;
+    }
+  },
+  }
+
+// // Content filters
+
+// Is a html tag
+function isHTML(str) {
+  // regex
+  var a = /<[a-z][\s\S]*>/i;
+  if (a.test(str)) {
+    return true;
   }
 }
 
-// // Content filter
-// function filter(msg) {
-//   // // The minimum prediction confidence.
-//   // const threshold = 0.9;
+// Is a script tag
+function isScript(str) {
+  // regex
+  var a = /<script[\s\S]*>/i;
+  if (a.test(str)) {
+    return true;
+  }
+}
 
-//   // // Which toxicity labels to return.
-//   // const labelsToInclude = ['identity_attack', 'insult', 'threat'];
-
-//   // toxicity.load(threshold).then(model => {
-//   //     const sentences = ['you suck'];
-//   //     model.classify(sentences).then(predictions => {
-//   //         predictions.forEach(prediction => {
-//   //             console.log(prediction.label);
-//   //             console.log(prediction.results[0].match);
-//   //             console.log(prediction.results[0].probabilities);
-//   //         });
-//   //     });
-//   // });
-// }
 
 
 
@@ -234,6 +251,21 @@ io.on("connection", (socket) => {
 
     // Prevent overload connection
     if (msg.length > 4000) {
+      socket.disconnect(true); // close the connection
+    }
+
+    // Prevent html tags
+    if (isHTML(msg)) {
+      socket.disconnect(true); // close the connection
+    }
+
+    // Prevent script tags
+    if (isScript(msg)) {
+      socket.disconnect(true); // close the connection
+    }
+
+    // Prevent badwords
+    if (isBadWord(msg)) {
       socket.disconnect(true); // close the connection
     }
 
