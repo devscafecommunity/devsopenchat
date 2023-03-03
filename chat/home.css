@@ -5,11 +5,36 @@ body {
 
 
     #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-    #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 0rem; margin: 0.25rem; color: #00ff1e; background-color: #000000; border-bottom: #00ff1e; border-bottom-height: 10px;}
+    #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 0rem; margin: 0.25rem; color: #00ff1e; background-color: #000000; border-bottom: #00ff1e; }
     #input:focus { outline: none; }
     #form > button { background: #000000; border: none; border-color: #00ff1e; padding: 0 1rem; margin: 0.25rem; border-radius: 0px; border-width: 10px; outline: none; color: #00ff1e; }
 
     #messages { list-style-type: none; margin: 0; padding: 0; }
     #messages > li { padding: 0.5rem 1rem; }
     #messages > li:nth-child(odd) { background: #000000; 
+}
+
+
+/* 
+
+Content style
+
+[left bar][right bar]
+
+[content container[info][chat]]
+*/
+
+/* Path: chat\home.css */
+
+#leftbar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 20%;
+    background: #000000;
+    color: #00ff1e;
+    overflow: auto;
+    padding: 0.5rem;
+    box-sizing: border-box;
 }

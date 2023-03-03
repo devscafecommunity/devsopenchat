@@ -5,9 +5,25 @@
     <link rel="stylesheet" href="/chat/home.css" />
   </head>
   <body>
+    <!-- Left side div -->
+    <div id="left">
+      <h1>Chat</h1>
+      <ul id="users"></ul>
+    </div>
+
+    <!-- Right side div -->
     <ul id="messages"></ul>
     <form id="form" action="">
-      <button>Send</button><input id="input" autocomplete="off" placeholder="Type here..."/>
+      <button>Send</button>
+      <input id="input" autocomplete="off" 
+        placeholder="Type a message" 
+        autofocus="autofocus" 
+        type="text" 
+        name="message" 
+        value="" 
+        required="required" 
+        pattern=".{1,}" 
+        title="1 character minimum" />
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/chat/home.js"></script>

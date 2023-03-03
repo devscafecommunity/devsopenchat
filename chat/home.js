@@ -16,9 +16,9 @@ var input = document.getElementById('input');
 function addMessage(msg) {
     var messages = document.getElementById('messages');
     var item = document.createElement('li');
-    // If lenght greather than 100 break the line
-    if (msg.length > 100) {
-        msg = msg.match(/.{1,100}/g).join("<br>");
+    // If lenght greather than 100 break the line and if enconter break line chars
+    if (msg.length > 200) {
+        msg = msg.replace(/(?:\r\n|\r|\n)/g, '<br>');
     }
     item.innerHTML = msg;
     messages.appendChild(item);
