@@ -87,13 +87,11 @@ let commands = {
       let result = await new Promise((resolve, reject) => {
 
         let url = `http://api.giphy.com/v1/gifs/search?q=${args.join("+")}&api_key=${GIPHY_KEY}&limit=1`;
-
+        let notresponse = "https://media.tenor.com/FM2b-I7t8S4AAAAC/discord-about-me.gif"
         request(url, { json: true }, (err, res, body) => {
           if (err) { reject(err); }
-          
-          // Prevent undefined
           let rer = `
-            <img src="${body.data[0]?.images?.original?.url ?? "https://media.tenor.com/FM2b-I7t8S4AAAAC/discord-about-me.gif"}">
+            <img src="${body.data[0]?.images?.original?.url ?? notresponse}">
           `;
           resolve(rer);
         }
